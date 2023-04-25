@@ -1,0 +1,324 @@
+#include <iostream>
+#include <string>
+using namespace std;
+/*//////////////////////////////////////////////////////////////////////// Employee ///////////////////////////////////////////////////////////////////////////////////*/
+class Employee
+{
+protected:
+	int employeeID;
+	string name;
+	string phone;
+	string email;
+	string jobTitle;
+public:
+	Employee(int employeeID, string name, string phone, string email, string jobTitle)
+	{
+		this->employeeID = employeeID;
+		this->name = name;
+		this->phone = phone;
+		this->email = email;
+		this->jobTitle = jobTitle;
+	}
+	virtual void inputDetails()
+	{
+		cout << "\nEnter employee details:" << endl;
+		int choice;
+		do {
+			cout << "\nChoose employee type:" << endl;
+			cout << "[1] Hourly Employee" << endl;
+			cout << "[2] Commission Employee" << endl;
+			cout << "[3] Salaried Employee" << endl;
+			cout << "[4] Manager" << endl;
+			cout << "Enter your choice: ";
+			cin >> choice;
+			switch (choice) {
+			case 1:
+				break;
+			case 2:
+				break;
+			case 3:
+				break;
+			case 4:
+				break;
+			}
+		} while (choice == 0);
+	}
+		
+	
+	virtual string displayDetails()
+	{
+		string details = "Employee ID: " + to_string(employeeID) + "\n";
+		details += "Name : " + name + "\n";
+		details += "Phone : " + phone + "\n";
+		details += "Email : " + email + "\n";
+		details += "Job Title : " + jobTitle + "\n";
+		return details;
+	}
+	virtual double getSalary() = 0;
+	virtual double calculatePay() = 0;
+
+	void setEmployeeID(int employeeID) { this->employeeID = employeeID; }
+	void setName(string name) { this->name = name; }
+	void setPhone(string phone) { this->phone = phone; }
+	void setEmail(string email) { this->email = email; }
+	void setJobTitle(string jobTitle) { this->jobTitle = jobTitle; }
+	int getEmployeeID() const { return employeeID; }
+	string getName() const { return name; }
+	string getPhone() const { return phone; }
+	string getEmail() const { return email; }
+	string getJobTitle() const { return jobTitle; }
+};
+/*////////////////////////////////////////////////////////////////////////  HourlyEmployee  ///////////////////////////////////////////////////////////////////////////*/
+class HourlyEmployee : public Employee {
+private:
+	double hoursWorked;
+	double rate;
+
+public:
+	HourlyEmployee(int employeeID, string name, string phone, string email, string jobTitle, double hoursWorked, double rate)
+		: Employee(employeeID, name, phone, email, jobTitle)
+	{
+		this->hoursWorked = hoursWorked;
+		this->rate = rate;
+	}
+	void inputDetails() override
+	{
+		Employee::inputDetails();
+		cout << "Enter hours worked : ";
+		cin >> hoursWorked;
+		setHoursWorked(hoursWorked);
+		cout << "Enter hourly rate : ";
+		cin >> rate;
+		setRate(rate);
+	}
+	string getDetails()
+	{
+		return displayDetails() + "Hours Worked: " + to_string(hoursWorked) + "Hours rate: " + to_string(rate) + "\n";
+	}
+	void addHours(int moreHours) { hoursWorked += moreHours; }
+	double getSalary() override { return calculatePay(); }
+	double calculatePay() override { return hoursWorked * rate; }
+
+	void setHoursWorked(double hoursWorked) { this->hoursWorked = hoursWorked; }
+	void setRate(double rate) { this->rate = rate; }
+	double getHoursWorked() { return hoursWorked; }
+	double getRate() { return rate; }
+};
+/*/////////////////////////////////////////////////////////////////////////  CommissionEmployee  /////////////////////////////////////////////////////////////////////*/
+class CommissionEmployee : public Employee {
+private:
+	double target;
+	double rate;
+public:
+	CommissionEmployee(int employeeID, string name, string phone, string email, string jobTitle, double target, double rate) :
+		Employee(employeeID, name, phone, email, jobTitle), target(target), rate(rate)
+	{
+		this->target = target;
+		this->rate = rate;
+	}
+	void inputDetails() override {
+		Employee::inputDetails();
+		cout << "Enter Your Target Worked :\n";
+		cin >> target;
+		setTarget(target);
+		cout << "Enter Your Commission Rate :\n";
+		cin >> rate;
+		setRate(rate);
+	}
+	string getDetails()
+	{
+		return displayDetails() + "Target: " + to_string(target) + +"rate : " + to_string(rate) + "\n";
+	}
+
+	double getSalary() override { return calculatePay(); }
+	double calculatePay() override { return target * rate; }
+
+	void setTarget(double target) { this->target = target; }
+	void setRate(double rate) { this->rate = rate; }
+	double getTarget() { return target; }
+	double getRate() { return rate; }
+};
+/*////////////////////////////////////////////////////////////////////  SalariedEmployee  //////////////////////////////////////////////////////////////////////////////*/
+class SalariedEmployee : public Employee {
+protected:
+	double salary;
+public:
+	SalariedEmployee(int employeeID, string name, string phone, string email, string jobTitle, double salary) :
+		Employee(employeeID, name, phone, email, jobTitle), salary(salary)
+	{
+		this->salary = salary;
+	}
+	void inputDetails() override {
+		Employee::inputDetails();
+		cout << "Enter Your Monthly Salary :\n";
+		cin >> salary;
+		set_Salary(salary);
+	}
+	string getDetails()
+	{
+		return displayDetails() + "Salary: " + to_string(salary) + "\n";
+	}
+
+	double getSalary() override { return calculatePay(); }
+	double calculatePay() override { return salary; }
+
+	void set_Salary(double salary) { this->salary = salary; }
+	double get_Salary() { return salary; }
+};
+/*////////////////////////////////////////////////////////////////////  ManagerEmployee  ///////////////////////////////////////////////////////////////////////////////*/
+class ManagerEmployee : public SalariedEmployee {
+private:
+	double bonus;
+public:
+	ManagerEmployee(int employeeID, string name, string phone, string email, string jobTitle, double salary, double bonus)
+		: SalariedEmployee(employeeID, name, phone, email, jobTitle, salary), bonus(bonus)
+	{
+		this->bonus = bonus;
+	}
+	void inputDetails() override {
+		Employee::inputDetails();
+		cout << "Enter Your Salary :\n";
+		cin >> salary;
+		set_Salary(salary);
+		cout << "Enter Your Bonus :\n";
+		cin >> bonus;
+		setBonus(bonus);
+	}
+	string getDetails()
+	{
+		return SalariedEmployee::getDetails() + "salary: " + to_string(salary) + "Bonus: " + to_string(bonus) + "\n";
+	}
+	void addBonus(double moreBonus) { bonus += moreBonus; }
+	double getSalary() override { return calculatePay(); }
+	double calculatePay() override { return salary + bonus; }
+
+	void setBonus(double bonus) { this->bonus = bonus; }
+	double getBonus() { return bonus; }
+};
+/*////////////////////////////////////////////////////////////////////// HRSystem  ////////////////////////////////////////////////////////////////////////////////////*/
+class HRSystem {
+private:
+	int sizeEmployee = 100;
+	Employee* EmployeeList;
+	int countEmployee = 0;
+
+public:
+	HRSystem() {}
+
+	~HRSystem() {}
+
+	void addEmployee()
+	{
+		cout << "\nEnter employee details:" << endl;
+		int choice;
+		do {
+			cout << "\nChoose employee type:" << endl;
+			cout << "[1] Hourly Employee" << endl;
+			cout << "[2] Commission Employee" << endl;
+			cout << "[3] Salaried Employee" << endl;
+			cout << "[4] Manager" << endl;
+			cout << "Enter your choice: ";
+			cin >> choice;
+			switch (choice) {
+			case 1:
+				break;
+			case 2:
+				break;
+			case 3:
+				break;
+			case 4:
+				break;
+			}
+		} while (choice == 0);
+	}
+	
+
+	void editEmployee()
+	{
+		int id;
+		cout << "\nEnter ID of employee to edit: ";
+		cin >> id;
+		cout << "\nChoose field to edit:" << endl;
+		cout << "[1] Name" << endl;
+		cout << "[2] Phone" << endl;
+		cout << "[3] Email" << endl;
+		cout << "[4] Job Title" << endl;
+		cout << "[5] Back " << endl;
+		cout << "Enter your choice: ";
+		int choice;
+		cin >> choice;
+		switch (choice)
+		{
+		case 1:
+		{
+			break;
+		}
+		case 2: {
+			break;
+		}
+		case 3: {
+			break;
+		}
+		case 4: {
+			break;
+		}
+		case 5: {
+			break;
+		}
+		default:
+			cout << "\nInvalid choice. Please enter a valid option.\n";
+			break;
+		}
+	}
+	void findEmployee() {}
+	void deleteEmployee() {}
+	void showAll() {}
+	void calcTotalPayroll() {}
+};
+
+int main()
+{
+	HRSystem hrSystem;
+	int choice;
+	do {
+		cout << "\n==============================================" << endl;
+		cout << "HR Management System" << endl;
+		cout << "==============================================" << endl;
+		cout << "[1] Add Employee" << endl;
+		cout << "[2] Edit Employee" << endl;
+		cout << "[3] Find Employee" << endl;
+		cout << "[4] Delete Employee" << endl;
+		cout << "[5] Show All Employees" << endl;
+		cout << "[6] Calculate Total Payroll" << endl;
+		cout << "[0] Exit" << endl;
+		cout << "Enter your choice: ";
+		cin >> choice;
+		switch (choice)
+		{
+		case 0:
+			cout << "\n""^ See You Later ^\n";
+			return 0;
+		case 1:
+			hrSystem.addEmployee();
+			break;
+		case 2:
+			hrSystem.editEmployee();
+			break;
+		case 3:
+			hrSystem.findEmployee();
+			break;
+		case 4:
+			hrSystem.deleteEmployee();
+			break;
+		case 5:
+			hrSystem.showAll();
+			break;
+		case 6:
+			hrSystem.calcTotalPayroll();
+			break;
+		default:
+			cout << "\n""Invalid choice : Please Enter Your Choice [0] TO [6] !!\n";
+		}
+	} while (choice);
+	return 0;
+}
